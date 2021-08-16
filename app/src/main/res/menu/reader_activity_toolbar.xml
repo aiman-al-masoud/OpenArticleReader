@@ -29,6 +29,13 @@
 
 
     <item
+        android:id="@+id/edit_notes"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="edit notes"
+        />
+
+
+    <item
         android:id="@+id/make_doodle"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/add_doodle"

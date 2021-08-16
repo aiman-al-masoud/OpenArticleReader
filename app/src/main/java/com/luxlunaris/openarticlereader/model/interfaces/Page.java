@@ -14,29 +14,21 @@ import java.io.Serializable;
  */
 public interface Page extends Serializable {
 
-	/**
-	 * Get the Page's text
-	 * @return
-	 */
-	public String getText();
-
-	/**
-	 * Modify/set the Page's text
-	 * @param text
-	 */
-	public void setText(String text);
-
+	//////
 	/**
 	 * Get the Page's name
 	 * @return
 	 */
 	public String getName();
 
+
+	//////
 	/**
 	 * Get the time the Page was created
 	 * @return
 	 */
 	public long getCreationTime();
+
 
 	/**
 	 * Get the last time the Page was modified
@@ -44,18 +36,21 @@ public interface Page extends Serializable {
 	 */
 	public long getLastModifiedTime();
 
+	///////////
 	/**
 	 * Delete the Page
 	 * @return
 	 */
 	public boolean delete();
 
+	/////////////
 	/**
 	 * Create the Page
 	 */
 	public void create();
 
 
+	///////////////
 	/**
 	 * get the number of tokens
 	 * @param token
@@ -64,6 +59,7 @@ public interface Page extends Serializable {
 	public int numOfTokens(String token);
 
 
+	//////////////
 	/**
 	 * Set the token to be found.
 	 * @param token
@@ -71,6 +67,7 @@ public interface Page extends Serializable {
 	public void setTokenToBeFound(String token);
 
 
+	////////////
 	/**
 	 * Get the next position of the current token
 	 * @return
@@ -78,6 +75,7 @@ public interface Page extends Serializable {
 	public int nextPosition();
 
 
+	/////////////
 	/**
 	 * Get the previous position of the current token
 	 * @return
@@ -85,6 +83,7 @@ public interface Page extends Serializable {
 	public int previousPosition();
 
 
+	//////////
 	/**
 	 * Save the current position
 	 * @param pos
@@ -92,24 +91,28 @@ public interface Page extends Serializable {
 	public void savePosition(int pos);
 
 
+	////////////
 	/**
 	 * Get the last-saved (last visited) position
 	 * @return
 	 */
 	public int getLastPosition();
 
+	////////////
 	/**
 	 * Add a PageListener to this Page
 	 * @param listener
 	 */
 	public void addListener(PageListener listener);
 
+	//////////
 	/**
 	 * Get a text based preview of this Page
 	 * @return
 	 */
 	public String getPreview();
 
+	/////////
 	/**
 	 *  Checks if this page contains ALL of the provided keywords
 	 * 	(ANDed keywords)
@@ -119,6 +122,7 @@ public interface Page extends Serializable {
 	public boolean contains(String[] keywords);
 
 
+	//////////
 	/**
 	 * Is this Page currently selected?
 	 * @return
@@ -126,19 +130,29 @@ public interface Page extends Serializable {
 	public boolean isSelected();
 
 
+	//////////
 	/**
 	 * Set this Page as selected.
 	 * @param select
 	 */
 	public void setSelected(boolean select);
 
+	public boolean isInRecycleBin();
+
+	////
+	public void setInRecycleBin(boolean inReycleBin);
+
+	///////
+	public boolean isEditable();
+
+	//////////
+	public void setEditable(boolean editable);
 
 	/**
-	 * Add an image to this Page.
-	 * @param path
+	 * Get the Page's html source
+	 * @return
 	 */
-	public void addImage(String path, int pos);
-
+	public String getSource();
 
 	/**
 	 * Returns the image directory of this Page.
@@ -146,26 +160,4 @@ public interface Page extends Serializable {
 	 */
 	public File getImageDir();
 
-	/**
-	 * Surround a part of this Page's text with an html tag.
-	 * @param pos
-	 * @param tag
-	 */
-	public void addHtmlTag(int pos, String tag);
-
-
-	/**
-	 * Remove all of the html tags from a position.
-	 * @param pos
-	 */
-	public void removeHtmlTags(int pos);
-
-
-	public boolean isInRecycleBin();
-
-	public void setInRecycleBin(boolean inReycleBin);
-
-
-
-
-	}
+}

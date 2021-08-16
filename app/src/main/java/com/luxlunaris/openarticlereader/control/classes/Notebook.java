@@ -5,10 +5,10 @@ import android.util.Log;
 import com.luxlunaris.openarticlereader.control.interfaces.NotebookListener;
 import com.luxlunaris.openarticlereader.control.interfaces.PageListener;
 import com.luxlunaris.openarticlereader.control.interfaces.Pageable;
+import com.luxlunaris.openarticlereader.model.classes.Article;
 import com.luxlunaris.openarticlereader.model.classes.Compacter;
 import com.luxlunaris.openarticlereader.model.classes.Downloader;
-import com.luxlunaris.openarticlereader.model.classes.SinglePage;
-import com.luxlunaris.openarticlereader.model.classes.WebPage;
+import com.luxlunaris.openarticlereader.model.classes.ReadOnlyPage;
 import com.luxlunaris.openarticlereader.model.classes.WebsiteData;
 import com.luxlunaris.openarticlereader.model.classes.comparators.LastModifiedComparator;
 import com.luxlunaris.openarticlereader.model.interfaces.Page;
@@ -18,7 +18,6 @@ import org.apache.commons.io.FileUtils;
 import org.jsoup.Connection;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,9 +105,12 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 * Create and return a new page with a default name: the unix-time of is creation
 	 * @return
 	 */
+	/*
 	public Page newPage(){
 		return newPage(System.currentTimeMillis()+"");
 	}
+
+	 */
 
 
 	/**
@@ -116,13 +118,13 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 * @param name
 	 * @return
 	 */
+	/*
 	private Page newPage(String name) {
 		SinglePage page = new SinglePage(PAGES_DIR+File.separator+name);
 		if(!page.exists()) {
 			page.create();
 			addPage(page);
 		}
-
 
 		try {
 			listener.onCreated(page);
@@ -132,6 +134,8 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 		return page;
 	}
+
+	 */
 
 
 
@@ -167,7 +171,7 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	public void onDeleted(Page page) {
 
 		//if deleted page is not empty, add it to recycle bin
-		if(!page.getText().trim().isEmpty()){
+		if(!page.getSource().trim().isEmpty()){
 			putInRecycleBin(page);
 		}
 
@@ -208,6 +212,8 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 	@Override
 	public void onCreated(Page page) {
+
+		Log.d("NOTEBOOK_SENSE_CREATED", page.getName()+"");
 
 		//stop if page is already in the list.
 		if(pagesList.contains(page)){
@@ -294,7 +300,7 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 		//list and load all of the folders in there
 		for(File file : pagesDir.listFiles()) {
-			Page page = new SinglePage(file.getPath());
+			Page page = new Article(file.getPath());
 			addPage(page);
 		}
 
@@ -314,22 +320,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		pagesList.add(0, page);
 	}
 
-
-	public void download(String address){
-		downloader.download(address);
-	}
-
-	public void downloadAll(String homepage){
-		downloader.downloadAll(homepage);
-	}
-
-	public void pauseDownloads(){
-		downloader.stopAll();
-	}
-
-	public void resumeDownloads(){
-		downloader.resumeAll();
-	}
 
 
 
@@ -399,7 +389,7 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 			//copy each file from the unzipped file
 			try {
 				FileUtils.copyDirectory(file, new File(PAGES_DIR+File.separator+file.getName()));
-				Page page = new SinglePage(file.getPath());
+				Page page = new Article(file.getPath());
 				addPage(page);
 				listener.onCreated(page);
 			} catch (IOException e) {
@@ -417,10 +407,10 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	public void compactSelection(){
 
 		//create a new blank page
-		Page page = newPage();
+		//Page page = newPage();
 
 		//write the contents of the selected pages onto the blank page
-		new Compacter().compact(selectedPagesList, page);
+		//new Compacter().compact(selectedPagesList, page);
 
 		//copy due to concurrent modification exception
 		ArrayList<Page> copy = new ArrayList<>(selectedPagesList);
@@ -448,18 +438,16 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 			return;
 		}
 
-		SinglePage copy = new SinglePage(PAGES_RECYCLE_BIN+File.separator+page.getName());
+		Article copy = new Article(PAGES_RECYCLE_BIN+File.separator+page.getName());
 		copy.create();
 		ArrayList<Page> mockList = new ArrayList<>();
 		mockList.add(page);
 		new Compacter(false).compact(mockList, copy);
 		copy.setInRecycleBin(true);
 
+
 		recycleBin.add(copy);
 		copy.addListener(this);
-
-		//Log.d("DELETED_PAGE", page.getName()+" copied to recycle bin as: "+copy.getPath());
-		//Log.d("DELETED_PAGE", "recycle bin size: "+ new File(PAGES_RECYCLE_BIN).listFiles().length);
 	}
 
 	/**
@@ -474,14 +462,19 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		}
 
 		recycleBin.remove(page);
-		Page restoredCopy = newPage(page.getName());
+		//Page restoredCopy = newPage(page.getName());
+
+		Page restoredCopy = new Article(PAGES_DIR+File.separator+page.getName());
+		restoredCopy.addListener(this);
+		restoredCopy.create();
+
+
+
 		ArrayList<Page> mockList = new ArrayList<>();
 		mockList.add(page);
 		new Compacter(false).compact(mockList, restoredCopy);
 		restoredCopy.setInRecycleBin(false);
 		page.delete();
-		//Log.d("DELETED_PAGE", page.getName()+" restored from recycle bin as: "+restoredCopy.getName());
-		//Log.d("DELETED_PAGE", "recycle bin size: "+ new File(PAGES_RECYCLE_BIN).listFiles().length);
 
 	}
 
@@ -519,7 +512,7 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		}
 
 		for(File file : recycleBinDir.listFiles()){
-			SinglePage page = new SinglePage(file.getPath());
+			Article page = new Article(file.getPath());
 			recycleBin.add(page);
 			page.addListener(this);
 		}
@@ -538,8 +531,28 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 
 
+	public void download(String address){
+		downloader.download(address);
+	}
+
+	public void downloadAll(String homepage){
+		downloader.downloadAll(homepage);
+	}
+
+	public void pauseDownloads(){
+		downloader.stopAll();
+	}
+
+	public void resumeDownloads(){
+		downloader.resumeAll();
+	}
 
 
+	/**
+	 * Called by a DownloadThread from the Downloader when a
+	 * a download is ready.
+	 * @param data
+	 */
 	@Override
 	public void onDownloadReady(WebsiteData data) {
 
@@ -550,36 +563,22 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 				public void run() {
 
-					SinglePage page = (SinglePage) newPage();
 
+					Article page = new Article(PAGES_DIR+File.separator+System.currentTimeMillis());
+					page.initContent(data);
 					page.create();
-
-					//data.doc.outputSettings().prettyPrint(false);
-
-					String content = data.doc.text();
-
-					String buffer = "";
-					for(String paragraph : content.split("\\. ")){
-						buffer += "<p>"+paragraph+".</p>";
-					}
-
-					content = buffer;
-
-					content = "<b>" + data.doc.title()+"</b>" +"<p>\n\n</p>"+ content ;
+					addPage(page);
 
 
-					page.setText(content);
-
-					for (Connection.Response img : data.images) {
-						page.addImage(img);
+					try {
+						listener.onCreated(page);
+					}catch (NullPointerException e){
+						e.printStackTrace();
 					}
 
 				}
 
 			}.start();
-
-
-
 
 		}
 

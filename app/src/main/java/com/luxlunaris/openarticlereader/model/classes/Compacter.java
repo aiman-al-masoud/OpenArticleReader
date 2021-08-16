@@ -52,7 +52,7 @@ public class Compacter {
                 textBlob+=head;
             }
 
-            textBlob+=page.getText()+"\n\n";
+            textBlob+=page.getSource()+"\n\n";
         }
 
 
@@ -95,7 +95,13 @@ public class Compacter {
 
 
         //set the text of the blank page
-        blankPage.setText(textBlob);
+        //blankPage.setSource(textBlob);
+
+        Article page = (Article)blankPage;
+        FileIO.write(page.textFile.getPath(), textBlob);
+
+        FileIO.copyDirectory(((Article)pages.get(0)).notesPage.getPath(), page.notesPage.getPath());
+
 
 
     }

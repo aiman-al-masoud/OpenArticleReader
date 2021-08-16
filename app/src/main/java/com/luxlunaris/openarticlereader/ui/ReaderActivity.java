@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import com.luxlunaris.openarticlereader.R;
 import com.luxlunaris.openarticlereader.control.classes.SETTINGS_TAGS;
 import com.luxlunaris.openarticlereader.control.classes.Settings;
+import com.luxlunaris.openarticlereader.model.classes.Article;
+import com.luxlunaris.openarticlereader.model.classes.EditablePage;
 import com.luxlunaris.openarticlereader.model.interfaces.Page;
 
 import java.io.File;
@@ -83,13 +85,16 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
         jumpToPosition(page.getLastPosition());
 
 
+
+
+
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     /**
@@ -98,7 +103,7 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
     private void reloadText(){
 
         //get the html source code from the Page.
-        String text =page.getText();
+        String text =page.getSource();
         Log.d("TEST_IMAGE", "TEXT FROM PAGE-FILE: "+text);
 
         //convert the html source code to a Spanned object
@@ -115,12 +120,31 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
         }
     }
 
+
+
+    private EditablePage castToEditablePage(Page page){
+
+        EditablePage editablePage;
+
+        try{
+            editablePage = (EditablePage)page;
+        }catch (ClassCastException e){
+            return null;
+        }
+
+        return editablePage;
+    }
+
+
+
     /**
      * Overwrite the page's text contents.
      */
     private void saveToPage(){
+        EditablePage p = castToEditablePage(page);
+        if(p==null){ return; }
         String edited = getEdited();
-        page.setText(edited);
+        p.setSource(edited);
     }
 
     /**
@@ -187,7 +211,7 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
         page.savePosition(textView.getSelectionStart());
 
         //if the edited text doesn't differ from the text in the page, don't re-write it
-        if(Html.toHtml(textView.getEditableText()).equals(page.getText())){
+        if(Html.toHtml(textView.getEditableText()).equals(page.getSource())){
             return;
         }
 
@@ -202,7 +226,15 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
      * @param editable
      */
     private void setEditable(boolean editable){
-        textView.setEnabled(editable);
+        //textView.setEnabled(editable);
+
+        if(editable){
+            setTitle("Editor");
+        }else{
+            setTitle("Reader");
+        }
+
+
         optionsMenu.findItem(R.id.importImage).setVisible(editable);
         optionsMenu.findItem(R.id.make_doodle).setVisible(editable);
         optionsMenu.findItem(R.id.styles_menu).setVisible(editable);
@@ -226,6 +258,13 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
         }else{
             setEditable(true);
         }
+
+        if(page.isEditable()){
+            setEditable(true);
+        }else{
+            setEditable(false);
+        }
+
 
         //make a search view for queries on articles
         SearchView searchView = (SearchView)menu.findItem(R.id.search_token).getActionView();
@@ -302,12 +341,19 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
                 applyTag("i");
                 break;
             case R.id.make_plain:
+                EditablePage p = castToEditablePage(page);
+                if(p==null){ return false; }
                 int currentPos = textView.getSelectionStart();
                 saveToPage();
-                page.removeHtmlTags(textView.getSelectionStart());
+                p.removeHtmlTags(textView.getSelectionStart());
                 reloadText();
                 jumpToPosition(currentPos);
                 break;
+            case R.id.edit_notes:
+                startEditingNotes();
+                break;
+
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -319,9 +365,11 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
      * @param tag
      */
     private void applyTag(String tag){
+        EditablePage p = castToEditablePage(page);
+        if(p==null){ return; }
         int currentPos = textView.getSelectionStart();
         saveToPage();
-        page.addHtmlTag(textView.getSelectionStart(), tag);
+        p.addHtmlTag(textView.getSelectionStart(), tag);
         reloadText();
         jumpToPosition(currentPos);
     }
@@ -332,8 +380,10 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
      * @param imagePath
      */
     private void addImage(String imagePath){
+        EditablePage p = castToEditablePage(page);
+        if(p==null){ return; }
         saveToPage();
-        page.addImage(imagePath, textView.getSelectionStart());
+        p.addImage(imagePath, textView.getSelectionStart());
         reloadText();
     }
 
@@ -397,25 +447,34 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
     }
 
     /**
+     * Launch another instance of ReaderActivity
+     * to edit the notes page of the current article.
+     */
+    public void startEditingNotes(){
+        Article article = (Article)page;
+        Page notesPage = article.getNotesPage();
+        Intent intent = new Intent(this, ReaderActivity.class);
+        intent.putExtra(PAGE_EXTRA, notesPage);
+        startActivity(intent);
+    }
+
+
+    /**
      * Save progress if page isn't empty.
      * Delete page if it's empty.
      */
     @Override
     public void onBackPressed() {
 
-        //get the edited text from the edittext view
-        String editedText = getEdited();
-
-        //if the edited text is empty, delete the Page
-        if(editedText.trim().isEmpty()){
-            boolean t = page.delete();
-        }else{
-        //else save the progress
-            saveProgress();
-        }
+        saveProgress();
 
         //return to the previous activity
         finish();
     }
+
+
+
+
+
 
 }

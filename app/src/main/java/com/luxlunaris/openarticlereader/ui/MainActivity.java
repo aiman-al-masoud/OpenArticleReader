@@ -65,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
             appStartedFlag = true;
 
             //jump to the reader activity with a new blank page
-            Intent intent = new Intent(this, ReaderActivity.class);
-            intent.putExtra(ReaderActivity.PAGE_EXTRA, notebook.newPage());
-            startActivity(intent);
+           // Intent intent = new Intent(this, ReaderActivity.class);
+           // intent.putExtra(ReaderActivity.PAGE_EXTRA, notebook.newPage());
+           // startActivity(intent);
         }
 
         Log.d("SPEED_TEST", "DECIDED WHERE TO GO!");

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.luxlunaris.noadpadlight">
+    package="com.luxlunaris.openarticlereader">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:allowBackup="true"
@@ -12,12 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Noadpadlight">
-        <activity android:name=".ui.DoodleActivity"></activity>
-        <activity android:name=".ui.SettingsActivity" />
-        <activity android:name=".ui.PagesActivity" />
-        <activity android:name=".ui.ReaderActivity" />
+        <activity android:name="com.luxlunaris.openarticlereader.ui.DoodleActivity"></activity>
+        <activity android:name="com.luxlunaris.openarticlereader.ui.SettingsActivity" />
+        <activity android:name="com.luxlunaris.openarticlereader.ui.PagesActivity" />
+        <activity android:name="com.luxlunaris.openarticlereader.ui.ReaderActivity" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.luxlunaris.openarticlereader.ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.Noadpadlight.NoActionBar">
             <intent-filter>
@@ -29,7 +31,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.luxlunaris.fileprovider"
+            android:authorities="com.luxlunaris.openarticlereader.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

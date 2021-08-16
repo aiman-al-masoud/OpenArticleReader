@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.luxlunaris.noadpadlight"
+        applicationId "com.luxlunaris.openarticlereader"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
@@ -44,5 +44,8 @@ dependencies {
 
 
     implementation group: 'commons-io', name: 'commons-io', version: '1.4'
+
+
+    implementation 'org.jsoup:jsoup:1.14.2'
 
 }

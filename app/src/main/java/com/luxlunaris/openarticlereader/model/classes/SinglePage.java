@@ -9,7 +9,10 @@ import com.luxlunaris.openarticlereader.model.interfaces.Metadata;
 import com.luxlunaris.openarticlereader.model.interfaces.Page;
 import com.luxlunaris.openarticlereader.model.services.FileIO;
 
+import org.jsoup.Connection;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +82,7 @@ public class SinglePage extends File implements Page {
 	 * @param text
 	 */
 	@Override
-	public void setText(String text) {
+	public synchronized void setText(String text) {
 
 		if(isInRecycleBin()){
 			return;
@@ -367,8 +370,8 @@ public class SinglePage extends File implements Page {
 	 */
 	private String generateImgTag(String path){
 		//opening and closing tags
-		String openImgTag = "<img src=\'";
-		String closeImgTag = "\' />";
+		String openImgTag = "<p><img src=\'";
+		String closeImgTag = "\' /></p>";
 
 		String element = openImgTag+path+closeImgTag;
 
@@ -386,14 +389,10 @@ public class SinglePage extends File implements Page {
 		//convert the position in the rendered text to line number
 		int lineNum = getLine(pos);
 
-		Log.d("ADDING_IMAGE", "AT LINE: "+lineNum);
-
 		//get the line number to paragraph number
 		int parNum = lineToParagraph(lineNum);
 		//(add the image as a new paragraph after the one selected, hence: +1)
 		parNum+=1;
-
-		Log.d("ADDING_IMAGE", "AT PARAGRAPH: "+parNum);
 
 		//prepare a new file in this Page's imgDir
 		File imageCopy = new File(imageDir.getPath()+File.separator+System.currentTimeMillis());
@@ -413,22 +412,41 @@ public class SinglePage extends File implements Page {
 		//add a new image-paragraph at the specified position.
 		parsList.add(parNum, "<p>"+imgElement+"</p>");
 
-		//test log paragraphs
-		//for(int i=0; i<parsList.size(); i++){
-		//	Log.d("ADDING_IMAGE", "PAR "+i+": "+parsList.get(i));
-		//}
-
 		//recompose the html source from the paragraphs' list.
 		String newHtml = "";
 		for(String par : parsList){
 			newHtml+=par;
 		}
 
-		Log.d("ADDING_IMAGE", "NEW HTML: "+newHtml);
-
 		//save the new html source
 		setText(newHtml);
 	}
+
+
+	public void addImage(Connection.Response response){
+
+		try{
+			String pathname = imageDir.getPath() + File.separator + System.currentTimeMillis();
+			FileOutputStream out = new FileOutputStream(new File(pathname));
+			out.write(response.bodyAsBytes());
+			out.flush();
+			out.close();
+			String imageTag = generateImgTag(pathname);
+			String text = getText();
+			text+=imageTag;
+			setText(text);
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+	}
+
+
+
+
+
+
 
 	/**
 	 * Returns this Page's image directory

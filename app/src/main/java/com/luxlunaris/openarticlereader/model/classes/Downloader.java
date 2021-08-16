@@ -45,6 +45,35 @@ public class Downloader {
         d.start();
     }
 
+    public void downloadAll(String homepage){
+        DownloadAllThread t = new DownloadAllThread(homepage);
+        t.start();
+    }
+
+    class DownloadAllThread extends Thread{
+
+        String homepage;
+
+        public DownloadAllThread(String homepage){
+            this.homepage = homepage;
+        }
+
+        public void run(){
+
+            Document doc = downloadDocument(homepage);
+            Elements linkElems =  doc.select("a");
+
+            for(Element e : linkElems){
+                String link = e.absUrl("href");
+                download(link);
+            }
+        }
+
+    }
+
+
+
+
 
     private Document downloadDocument(String address) {
         try {
@@ -76,17 +105,26 @@ public class Downloader {
     }
 
     public void resumeAll() {
-        for(Thread t : activeThreads) {
-            t.resume();
-        }
+        new Thread(){
+            public void run(){
+                for(Thread t : activeThreads) {
+                    t.start();
+                }
+            }
+        }.start();
     }
 
 
-
     public void stopAll() {
-        for(Thread t : activeThreads) {
-            t.stop();
-        }
+
+        new Thread(){
+            public void run(){
+                for(Thread t : activeThreads) {
+                    t.interrupt();
+                }
+            }
+        }.start();
+
     }
 
 
@@ -113,6 +151,9 @@ public class Downloader {
 
         public void run() {
 
+            if(isInterrupted()){
+                return;
+            }
 
             //try downloading the document
             doc = downloadDocument(address);

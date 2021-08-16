@@ -74,7 +74,11 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
 
     private final String QUESTION_EMPTY_RECYCLE_BIN = "EMPTY_RECYCLE_BIN";
 
-    private final String GET_WEB_ADDRESS_FROM_USER = "GET_WEB_ADDRESS";
+    private final String SINGLE_DOWNLOAD = 1+"";
+    private final String DOWNLOAD_FROM_SOURCE = 2+"";
+
+
+
 
     /**
      * On create.
@@ -119,9 +123,13 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
     @Override
     public void onTextInputted(String tag, String userResponse) {
         switch (tag){
-            case GET_WEB_ADDRESS_FROM_USER:
+            case SINGLE_DOWNLOAD:
                 notebook.download(userResponse);
                 break;
+            case DOWNLOAD_FROM_SOURCE:
+                notebook.downloadAll(userResponse);
+                break;
+
 
         }
 
@@ -393,9 +401,23 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
             case R.id.single_download:
                 TextPromptDialog textDialog = TextPromptDialog.newInstance();
                 textDialog.setListener(this);
-                textDialog.setPrompt(GET_WEB_ADDRESS_FROM_USER, "Enter full web address:");
+                textDialog.setPrompt(SINGLE_DOWNLOAD, "Enter full web address:");
                 textDialog.show(getSupportFragmentManager(), "");
                 break;
+            case R.id.bulk_download_from_single_source:
+                textDialog = TextPromptDialog.newInstance();
+                textDialog.setListener(this);
+                textDialog.setPrompt(DOWNLOAD_FROM_SOURCE, "Enter source's homepage:");
+                textDialog.show(getSupportFragmentManager(), "");
+                break;
+            case R.id.halt_all_downloads:
+                notebook.pauseDownloads();
+                break;
+            case R.id.resume_all_downloads:
+                notebook.resumeDownloads();
+                break;
+
+
 
 
         }

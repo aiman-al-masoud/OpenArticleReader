@@ -142,10 +142,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 */
 	@Override
 	public void onSelected(Page page) {
-
-		Log.d("SELECTED_PAGE", " "+page+" selected: "+page.isSelected());
-
-
 		if(page.isSelected()){
 			selectedPagesList.add(page);
 		}else{
@@ -204,7 +200,9 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 
 		//re-sort the list of pages.
-		Collections.sort(pagesList, new LastModifiedComparator());
+
+
+		//Collections.sort(pagesList, new LastModifiedComparator());
 
 	}
 
@@ -320,6 +318,20 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	public void download(String address){
 		downloader.download(address);
 	}
+
+	public void downloadAll(String homepage){
+		downloader.downloadAll(homepage);
+	}
+
+	public void pauseDownloads(){
+		downloader.stopAll();
+	}
+
+	public void resumeDownloads(){
+		downloader.resumeAll();
+	}
+
+
 
 
 
@@ -533,30 +545,38 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 		synchronized (this){
 
-			Page page  = newPage();
 
-			page.create();
+			new Thread() {
 
-			String content = data.doc.text();
+				public void run() {
 
-			content = "<p>"+data.doc.title()+"</p>"+"<p>\n</p>"+ "<p>"+content+"</p>";
+					SinglePage page = (SinglePage) newPage();
 
-			page.setText(content);
+					page.create();
 
-			for(Connection.Response img : data.images){
+					//data.doc.outputSettings().prettyPrint(false);
 
-				try{
-					String pathname = page.getImageDir().getPath()+File.separator+System.currentTimeMillis();
-					FileOutputStream out = new FileOutputStream(new File(pathname));
-					out.write(img.bodyAsBytes());
-					out.flush();
-					out.close();
-					page.addImage(pathname, 0);
-				}catch (IOException e){
+					String content = data.doc.text();
+
+					String buffer = "";
+					for(String paragraph : content.split("\\. ")){
+						buffer += "<p>"+paragraph+".</p>";
+					}
+
+					content = buffer;
+
+					content = "<b>" + data.doc.title()+"</b>" +"<p>\n\n</p>"+ content ;
+
+
+					page.setText(content);
+
+					for (Connection.Response img : data.images) {
+						page.addImage(img);
+					}
 
 				}
-			}
 
+			}.start();
 
 
 

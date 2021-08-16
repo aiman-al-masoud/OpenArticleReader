@@ -33,6 +33,7 @@ This Product makes use of the following dependencies:
 
 * <a href="https://commons.apache.org/proper/commons-io/apidocs/index.html?org/apache/commons/io/package-summary.html"> Apache Commons IO</a>
 
+* <a href="https://jsoup.org/">Jsoup</a>
 
 
 

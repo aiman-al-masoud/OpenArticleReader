@@ -39,11 +39,6 @@ public class SettingsActivity extends ColorActivity {
         });
 
 
-
-        ToggleFragment lauchToBlankPageToggle = ToggleFragment.newInstance(getString(R.string.auto_launch_to_blank_setting), SETTINGS_TAGS.LAUNCH_TO_BLANK_PAGE);
-        getSupportFragmentManager().beginTransaction().add(linearLayout.getId(), lauchToBlankPageToggle, "" ).commit();
-
-
         SpinnerFragment spinner =  SpinnerFragment.newInstance(SETTINGS_TAGS.THEME, THEMES.values(), getString(R.string.select_app_theme_setting));
         getSupportFragmentManager().beginTransaction().add(linearLayout.getId(), spinner, "").commit();
 

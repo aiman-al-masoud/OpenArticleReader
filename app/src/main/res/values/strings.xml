@@ -1,20 +1,17 @@
 <resources>
     <string name="app_name">OAR</string>
-    <!-- Strings used for fragments for navigation -->
 
-    <!-- TODO: Remove or change this placeholder text -->
-
+    <!-- Comment -->
 
     <string name="credits">
-        
-        Thanks for trying out Noadpad! :-) \n\n
+
+        Thanks for trying out OAR, the Open Article Reader news feed app! :-) \n\n
         
         For more info:  \n\n
         
         Contact me: luxlunarislabs@gmail.com  \n\n
-        Repo: https://github.com/aiman-al-masoud/noadpad \n\n
-        Quick Start Guide: https://github.com/aiman-al-masoud/noadpad/wiki/Quick-Start-Guide  \n\n
-        License: https://github.com/aiman-al-masoud/noadpad/blob/master/LICENSE.md  \n\n
+        Repo: https://github.com/aiman-al-masoud/OpenArticleReader \n\n
+        License: https://github.com/aiman-al-masoud/OpenArticleReader/blob/master/LICENSE.md  \n\n
 
     </string>
     <string name="search_icon_title">search</string>
@@ -62,8 +59,6 @@
     <string name="confirm">confirm</string>
     <string name="cancel">cancel</string>
     <string name="are_you_sure">Are you sure?</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

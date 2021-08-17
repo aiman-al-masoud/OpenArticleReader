@@ -2,14 +2,16 @@
 <resources>
     <string name="app_name">OAR</string>
     <string name="credits">
-        Grazie per aver scelto Noadpad! :-) \n\n
+
+        Grazie per aver provato OAR, Open Article Reader! :-) \n\n
 
         Per maggiori informazioni:\n\n
 
-        Contatto: luxlunarislabs@gmail.com  \n
-        Repo: https://github.com/aiman-al-masoud/noadpad  \n
-        Guida breve: https://github.com/aiman-al-masoud/noadpad/wiki/Guida-Breve \n
-        Licenza: https://github.com/aiman-al-masoud/noadpad/blob/master/LICENSE.md  \n
+        Contattami: luxlunarislabs@gmail.com  \n\n
+        Repo: https://github.com/aiman-al-masoud/OpenArticleReader \n\n
+        Licenza: https://github.com/aiman-al-masoud/OpenArticleReader/blob/master/LICENSE.md  \n\n
+
+
     </string>
     <string name="search_icon_title">cerca</string>
     <string name="new_page_icon_title">nuova pagina</string>

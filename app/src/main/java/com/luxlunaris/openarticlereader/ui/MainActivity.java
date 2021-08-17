@@ -39,14 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-
         CONTEXT = this.getApplicationContext();
 
-
         notebook  = Notebook.getInstance();
-        Log.d("SPEED_TEST", "DONE INITIALIZING NOTEBOOK!");
-
-
 
         //make the pages-listing activity
         Intent goToPagesIntent = new Intent(this, PagesActivity.class);
@@ -64,15 +59,7 @@ public class MainActivity extends AppCompatActivity {
             //set the "launch phase is over" flag
             appStartedFlag = true;
 
-            //jump to the reader activity with a new blank page
-           // Intent intent = new Intent(this, ReaderActivity.class);
-           // intent.putExtra(ReaderActivity.PAGE_EXTRA, notebook.newPage());
-           // startActivity(intent);
         }
-
-        Log.d("SPEED_TEST", "DECIDED WHERE TO GO!");
-
-        Log.d("SPEED_TEST", "DONE????");
 
     }
 

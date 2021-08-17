@@ -14,150 +14,125 @@ import java.io.Serializable;
  */
 public interface Page extends Serializable {
 
-	//////
 	/**
 	 * Get the Page's name
 	 * @return
 	 */
-	public String getName();
+	String getName();
 
-
-	//////
 	/**
 	 * Get the time the Page was created
 	 * @return
 	 */
-	public long getCreationTime();
-
+	long getCreationTime();
 
 	/**
 	 * Get the last time the Page was modified
 	 * @return
 	 */
-	public long getLastModifiedTime();
+	long getLastModifiedTime();
 
-	///////////
 	/**
 	 * Delete the Page
 	 * @return
 	 */
-	public boolean delete();
+	boolean delete();
 
-	/////////////
 	/**
 	 * Create the Page
 	 */
-	public void create();
+	void create();
 
-
-	///////////////
 	/**
 	 * get the number of tokens
 	 * @param token
 	 * @return
 	 */
-	public int numOfTokens(String token);
+	int numOfTokens(String token);
 
-
-	//////////////
 	/**
 	 * Set the token to be found.
 	 * @param token
 	 */
 	public void setTokenToBeFound(String token);
 
-
-	////////////
 	/**
 	 * Get the next position of the current token
 	 * @return
 	 */
-	public int nextPosition();
+	int nextPosition();
 
-
-	/////////////
 	/**
 	 * Get the previous position of the current token
 	 * @return
 	 */
-	public int previousPosition();
+	int previousPosition();
 
-
-	//////////
 	/**
 	 * Save the current position
 	 * @param pos
 	 */
-	public void savePosition(int pos);
+	void savePosition(int pos);
 
-
-	////////////
 	/**
 	 * Get the last-saved (last visited) position
 	 * @return
 	 */
-	public int getLastPosition();
+	int getLastPosition();
 
-	////////////
 	/**
 	 * Add a PageListener to this Page
 	 * @param listener
 	 */
-	public void addListener(PageListener listener);
+	void addListener(PageListener listener);
 
-	//////////
 	/**
 	 * Get a text based preview of this Page
 	 * @return
 	 */
-	public String getPreview();
+	String getPreview();
 
-	/////////
 	/**
 	 *  Checks if this page contains ALL of the provided keywords
 	 * 	(ANDed keywords)
 	 * @param keywords
 	 * @return
 	 */
-	public boolean contains(String[] keywords);
+	boolean contains(String[] keywords);
 
-
-	//////////
 	/**
 	 * Is this Page currently selected?
 	 * @return
 	 */
-	public boolean isSelected();
+	boolean isSelected();
 
-
-	//////////
 	/**
 	 * Set this Page as selected.
 	 * @param select
 	 */
-	public void setSelected(boolean select);
+	void setSelected(boolean select);
 
-	public boolean isInRecycleBin();
+	boolean isInRecycleBin();
 
-	////
-	public void setInRecycleBin(boolean inReycleBin);
+	void setInRecycleBin(boolean inReycleBin);
 
-	///////
-	public boolean isEditable();
+	boolean isEditable();
 
-	//////////
-	public void setEditable(boolean editable);
-
+	void setEditable(boolean editable);
 	/**
 	 * Get the Page's html source
 	 * @return
 	 */
-	public String getSource();
-
+	String getSource();
 	/**
 	 * Returns the image directory of this Page.
 	 * @return
 	 */
-	public File getImageDir();
+	File getImageDir();
+
+
+
+
+
 
 }

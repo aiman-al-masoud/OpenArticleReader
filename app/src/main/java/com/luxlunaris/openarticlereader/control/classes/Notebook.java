@@ -4,7 +4,7 @@ import com.luxlunaris.openarticlereader.control.interfaces.NotebookListener;
 import com.luxlunaris.openarticlereader.control.interfaces.PageListener;
 import com.luxlunaris.openarticlereader.control.interfaces.Pageable;
 import com.luxlunaris.openarticlereader.model.classes.Article;
-import com.luxlunaris.openarticlereader.model.classes.Compacter;
+import com.luxlunaris.openarticlereader.model.classes.Copier;
 import com.luxlunaris.openarticlereader.model.classes.Downloader;
 import com.luxlunaris.openarticlereader.model.classes.WebsiteData;
 import com.luxlunaris.openarticlereader.model.classes.comparators.LastModifiedComparator;
@@ -362,9 +362,8 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 		Article copy = new Article(PAGES_RECYCLE_BIN+File.separator+page.getName());
 		copy.create();
-		ArrayList<Page> mockList = new ArrayList<>();
-		mockList.add(page);
-		new Compacter(false).compact(mockList, copy);
+
+		new Copier().copy(page, copy);
 		copy.setInRecycleBin(true);
 
 		recycleBin.add(copy);
@@ -388,11 +387,8 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		restoredCopy.addListener(this);
 		restoredCopy.create();
 
-		ArrayList<Page> mockList = new ArrayList<>();
-		mockList.add(page);
-		new Compacter(false).compact(mockList, restoredCopy);
+		new Copier().copy(page, restoredCopy);
 		restoredCopy.setInRecycleBin(false);
-
 
 		page.delete();
 

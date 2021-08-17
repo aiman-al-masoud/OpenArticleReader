@@ -370,9 +370,20 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 * all of the pages' contents.
 	 * @return
 	 */
-	public File generateBackupFile(){
-		return FileIO.zipDir(PAGES_DIR, Paths.PAGES_BACKUP_DIR);
+	public void generateBackupFile(BackupRequester listener){
+
+		new Thread(){
+			public void run(){
+				File file = FileIO.zipDir(PAGES_DIR, Paths.PAGES_BACKUP_DIR);
+				listener.onBackupReady(file);
+			}
+		}.start();
 	}
+
+	public interface BackupRequester{
+		public void onBackupReady(File backupFile);
+	}
+
 
 
 	/**

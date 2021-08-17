@@ -23,7 +23,7 @@ import java.io.File;
  * to import/export pages in the format of a  single zipped file.
  *
  */
-public class BackupFragment extends Fragment {
+public class BackupFragment extends Fragment implements Notebook.BackupRequester {
 
     /**
      * Triggers the sharing API to send the zipped file containing all of the currently saved pages.
@@ -66,6 +66,8 @@ public class BackupFragment extends Fragment {
         return view;
     }
 
+
+
     /**
      * Calls android's share file api, and shares the
      * backup file.
@@ -74,21 +76,29 @@ public class BackupFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-
-            //get the backup file from the Notebook
-            File backupFile = Notebook.getInstance().generateBackupFile();
-
-            //get the backup file's uri from the FileProvider (needed for android permissions and useless ostentation of security)
-            Uri uri = FileProvider.getUriForFile(getContext(), "com.luxlunaris.fileprovider", backupFile);
-
-            //create an intent to share the backup file with another app
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("application/zip");
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(intent, getString(R.string.total_data_export_title)));
-
+            requestBackup();
         }
+    }
+
+
+    public void requestBackup(){
+        //get the backup file from the Notebook
+        Notebook.getInstance().generateBackupFile(this);
+    }
+
+
+
+    @Override
+    public void onBackupReady(File backupFile) {
+        //get the backup file's uri from the FileProvider (needed for android permissions and useless ostentation of security)
+        Uri uri = FileProvider.getUriForFile(getContext(), "com.luxlunaris.openarticlereader.fileprovider", backupFile);
+
+        //create an intent to share the backup file with another app
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("application/zip");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(intent, getString(R.string.total_data_export_title)));
     }
 
     /**

@@ -18,12 +18,12 @@ public abstract class AbstractPage extends File implements Page {
     /**
      * manages this Page's stored metadata
      */
-    Metadata metadata;
+    protected Metadata metadata;
 
     /**
      * contains this Page's user-generated text
      */
-    File textFile;
+    protected File textFile;
 
     /**
      * Directory that contains this Page's images.
@@ -33,12 +33,12 @@ public abstract class AbstractPage extends File implements Page {
     /**
      * this Page's listeners (Notebook)
      */
-    ArrayList<PageListener> listeners;
+    protected ArrayList<PageListener> listeners;
 
     /**
      * true if this Page is currently "selected"
      */
-    boolean selected = false;
+    protected boolean selected = false;
 
     /**
      * Data relative to the currently searched-for token.
@@ -51,6 +51,13 @@ public abstract class AbstractPage extends File implements Page {
      * The tag that states whether this Page is editable or not.
      */
     public final String TAG_EDITABLE = "EDITABLE";
+
+
+
+    //page tags
+    public static final String SOURCE_URL = "";
+
+
 
 
     public AbstractPage(String pathname) {
@@ -203,17 +210,6 @@ public abstract class AbstractPage extends File implements Page {
     public String getName(){
         return super.getName();
     }
-
-
-    /**
-     * Get the time of creation of this Page
-     * @return
-     */
-    @Override
-    public long getCreationTime() {
-        return Long.parseLong(getName());
-    }
-
 
     /**
      * Get this time this Page got last modified
@@ -390,29 +386,63 @@ public abstract class AbstractPage extends File implements Page {
         return element;
     }
 
+    @Override
+    public void setTag(String tag, String value) {
+        metadata.setTagValue(tag, value);
+    }
 
+    @Override
+    public String getStringTag(String tag) {
+        return metadata.getString(tag);
+    }
 
+    @Override
+    public int getIntTag(String tag) {
+        try {
+            return metadata.getInt(tag);
+        } catch (WrongTagTypeException e) {
+            e.printStackTrace();
+        }
 
+        //TODO: choose default value based on tag
+        return 0;
+    }
 
+    @Override
+    public boolean getBooleanTag(String tag) {
+        try {
+            metadata.getBoolean(tag);
+        } catch (WrongTagTypeException e) {
+            e.printStackTrace();
+        }
 
+        //TODO: choose default value based on tag
+        return false;
+    }
 
+    @Override
+    public double getFloatTag(String tag) {
+        try {
+            return metadata.getFloat(tag);
+        } catch (WrongTagTypeException e) {
+            e.printStackTrace();
+        }
 
+        //TODO: choose default value based on tag
+        return 0;
+    }
 
+    @Override
+    public long getLongTag(String tag) {
+        try {
+            return metadata.getLong(tag);
+        } catch (WrongTagTypeException e) {
+            e.printStackTrace();
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        //TODO: choose default value based on tag
+        return 0;
+    }
 
 
 

@@ -36,6 +36,9 @@ public interface Metadata {
 	public double getFloat(String tagName) throws WrongTagTypeException;
 
 
+	public long getLong(String tagName) throws WrongTagTypeException;
+
+
 	/**
 	 * Set the value of a tag.
 	 * NB: you have to cast the value to a string to save it.

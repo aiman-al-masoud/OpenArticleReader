@@ -20,9 +20,12 @@ import com.luxlunaris.openarticlereader.control.classes.SETTINGS_TAGS;
 import com.luxlunaris.openarticlereader.control.classes.Settings;
 import com.luxlunaris.openarticlereader.model.classes.Article;
 import com.luxlunaris.openarticlereader.model.classes.EditablePage;
+import com.luxlunaris.openarticlereader.model.classes.PAGE_TAGS;
 import com.luxlunaris.openarticlereader.model.interfaces.Page;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The activity responsible for displaying and editing a Page.
@@ -83,12 +86,6 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
         reloadText();
         //jump to the last-saved position of the page
         jumpToPosition(page.getLastPosition());
-
-
-
-
-
-
 
     }
 
@@ -352,6 +349,20 @@ public class ReaderActivity extends ColorActivity implements ImportFileFragment.
             case R.id.edit_notes:
                 startEditingNotes();
                 break;
+            case R.id.show_page_details:
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE dd MMMM yyyy hh:mm");
+                String dateString = dateFormat.format(page.getLongTag(PAGE_TAGS.CREATION_TIME));
+
+
+                String details = "source: "+page.getStringTag(PAGE_TAGS.SOURCE_URL)+"\n\n";
+                details+= "date downloaded: "+dateString+"\n\n";
+
+                InfoFragment f = InfoFragment.newInstance(details);
+                f.show(getSupportFragmentManager(), "");
+
+                break;
+
 
 
         }

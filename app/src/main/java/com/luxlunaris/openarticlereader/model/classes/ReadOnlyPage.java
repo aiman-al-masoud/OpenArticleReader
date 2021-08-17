@@ -15,6 +15,9 @@ public class ReadOnlyPage extends AbstractPage{
     transient Document doc;
     transient ArrayList<Connection.Response> images;
 
+
+    public final String TAG_URL = "TAG_URL";
+
     public ReadOnlyPage(String pathname){
         super(pathname);
     }
@@ -33,6 +36,13 @@ public class ReadOnlyPage extends AbstractPage{
             setEditable(false);
             return;
         }
+
+
+        setTag(PAGE_TAGS.SOURCE_URL, doc.location());
+        setTag(PAGE_TAGS.CREATION_TIME, System.currentTimeMillis()+"");
+
+
+
 
         String content = doc.text();
         String buffer = "";

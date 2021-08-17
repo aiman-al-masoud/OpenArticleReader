@@ -12,12 +12,9 @@ import java.util.ArrayList;
 
 public class Downloader {
 
-
     private WebUser listener;
 
-
     private ArrayList<Thread> activeThreads;
-
 
     public interface WebUser{
 
@@ -31,8 +28,6 @@ public class Downloader {
     public Downloader(){
         this.activeThreads = new ArrayList<>();
     }
-
-
 
     public void addListener(WebUser listener) {
         this.listener = listener;
@@ -72,9 +67,6 @@ public class Downloader {
     }
 
 
-
-
-
     private Document downloadDocument(String address) {
         try {
             return Jsoup.connect(address).get();
@@ -85,7 +77,6 @@ public class Downloader {
         return null;
     }
 
-
     private Connection.Response downloadImage(String address) {
         try {
             return Jsoup.connect(address).ignoreContentType(true).execute();
@@ -95,14 +86,6 @@ public class Downloader {
         return null;
     }
 
-
-
-    public void interruptAll() {
-
-        for(Thread t : activeThreads) {
-            t.stop();
-        }
-    }
 
     public void resumeAll() {
         new Thread(){
@@ -126,14 +109,6 @@ public class Downloader {
         }.start();
 
     }
-
-
-
-
-
-
-
-
 
     /**
      * Thread that downloads a single webpage and puts the data in a WebsiteData object.

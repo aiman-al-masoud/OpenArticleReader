@@ -21,12 +21,6 @@ public interface Page extends Serializable {
 	String getName();
 
 	/**
-	 * Get the time the Page was created
-	 * @return
-	 */
-	long getCreationTime();
-
-	/**
 	 * Get the last time the Page was modified
 	 * @return
 	 */
@@ -131,7 +125,12 @@ public interface Page extends Serializable {
 	File getImageDir();
 
 
-
+	public void setTag(String tag, String value);
+	public String getStringTag(String tag);
+	public int getIntTag(String tag);
+	public boolean getBooleanTag(String tag);
+	public double getFloatTag(String tag);
+	public long getLongTag(String tag);
 
 
 

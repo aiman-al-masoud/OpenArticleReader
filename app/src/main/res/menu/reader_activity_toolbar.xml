@@ -42,6 +42,17 @@
         />
 
 
+    <item
+        android:id="@+id/show_page_details"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="details"
+        app:showAsAction="ifRoom"
+        />
+
+
+
+
+
 
     <item
         android:id="@+id/styles_menu"

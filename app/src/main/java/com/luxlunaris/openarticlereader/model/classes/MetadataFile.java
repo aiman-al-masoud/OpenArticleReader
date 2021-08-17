@@ -150,6 +150,21 @@ public class MetadataFile extends File implements Metadata {
 
 	}
 
+	@Override
+	public long getLong(String tagName) throws WrongTagTypeException {
+		try {
+			long parsedLong = Long.parseLong(getString(tagName).trim());
+			return parsedLong;
+		}catch(NullPointerException e){
+			//tag doesn't exists
+		}catch (NumberFormatException e){
+			throw new WrongTagTypeException(tagName+" is not a long!");
+		}
+
+		//TODO: fix this!
+		return 0;
+	}
+
 
 	/**
 	 * Removes a key and its associated value.

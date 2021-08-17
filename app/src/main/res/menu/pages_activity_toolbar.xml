@@ -10,13 +10,6 @@
 
 
     <item
-        android:id="@+id/new_page"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="@string/new_page_icon_title"
-        app:showAsAction="always" />
-
-
-    <item
         android:id="@+id/edit"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/edit_icon_title"

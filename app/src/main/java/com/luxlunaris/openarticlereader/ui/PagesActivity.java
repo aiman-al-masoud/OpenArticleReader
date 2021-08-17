@@ -289,7 +289,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
         CAN_LOAD_MORE_PAGES = false;
 
         //in options menu
-        optionsMenu.findItem(R.id.new_page).setVisible(false);
         optionsMenu.findItem(R.id.app_bar_search).setVisible(false);
         optionsMenu.findItem(R.id.load_more_pages).setVisible(false);
         optionsMenu.findItem(R.id.show_recycle_bin).setVisible(false);
@@ -298,7 +297,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
 
         //in edit menu
         editMenu = editMenu==null? new EditMenu(this, findViewById(R.id.edit)) : editMenu;
-        editMenu.getMenu().findItem(R.id.compact).setVisible(false);
         editMenu.getMenu().findItem(R.id.restore).setVisible(true);
     }
 
@@ -307,7 +305,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
      */
     private void exitRecycleBin(){
         //in options menu
-        optionsMenu.findItem(R.id.new_page).setVisible(true);
         optionsMenu.findItem(R.id.app_bar_search).setVisible(true);
         optionsMenu.findItem(R.id.load_more_pages).setVisible(true);
         optionsMenu.findItem(R.id.show_recycle_bin).setVisible(true);
@@ -315,7 +312,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
 
         //in edit menu
         editMenu = editMenu==null? new EditMenu(this, findViewById(R.id.edit)) : editMenu;
-        editMenu.getMenu().findItem(R.id.compact).setVisible(true);
         editMenu.getMenu().findItem(R.id.restore).setVisible(false);
     }
 
@@ -378,11 +374,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
                 Intent goToSetIntent = new Intent(this, SettingsActivity.class);
                 startActivity(goToSetIntent);
                 break;
-            case R.id.new_page:
-                //Intent intent = new Intent(this, ReaderActivity.class);
-                //intent.putExtra(ReaderActivity.PAGE_EXTRA,notebook.newPage());
-                //startActivity(intent);
-                break;
             case R.id.edit:
                 editMenu = editMenu==null? new EditMenu(this, findViewById(R.id.edit)) : editMenu;
                 editMenu.show();
@@ -416,7 +407,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
             case R.id.resume_all_downloads:
                 notebook.resumeDownloads();
                 break;
-
 
 
 
@@ -478,9 +468,6 @@ public class PagesActivity extends ColorActivity  implements NotebookListener, Y
                         //delete the page (the fragment will automatically be removed too through the callback method "onDeleted")
                         page.delete();
                     }
-                    break;
-                case R.id.compact:
-                    notebook.compactSelection();
                     break;
                 case R.id.restore:
                     notebook.restoreSelection();

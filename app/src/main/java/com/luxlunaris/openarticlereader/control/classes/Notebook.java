@@ -1,21 +1,17 @@
 package com.luxlunaris.openarticlereader.control.classes;
 
-import android.util.Log;
-
 import com.luxlunaris.openarticlereader.control.interfaces.NotebookListener;
 import com.luxlunaris.openarticlereader.control.interfaces.PageListener;
 import com.luxlunaris.openarticlereader.control.interfaces.Pageable;
 import com.luxlunaris.openarticlereader.model.classes.Article;
 import com.luxlunaris.openarticlereader.model.classes.Compacter;
 import com.luxlunaris.openarticlereader.model.classes.Downloader;
-import com.luxlunaris.openarticlereader.model.classes.ReadOnlyPage;
 import com.luxlunaris.openarticlereader.model.classes.WebsiteData;
 import com.luxlunaris.openarticlereader.model.classes.comparators.LastModifiedComparator;
 import com.luxlunaris.openarticlereader.model.interfaces.Page;
 import com.luxlunaris.openarticlereader.model.services.FileIO;
 
 import org.apache.commons.io.FileUtils;
-import org.jsoup.Connection;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +73,9 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 */
 	private static NotebookListener listener;
 
-
+	/**
+	 * The object that downloads and async-returns content from the web.
+	 */
 	private static Downloader downloader;
 
 
@@ -87,7 +85,7 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		recycleBin = new ArrayList<>();
 		loadPages();
 		loadRecycleBin();
-		currentPage = 0;
+		rewind();
 		downloader = new Downloader();
 		downloader.addListener(this);
 	}
@@ -99,44 +97,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	public synchronized static Notebook getInstance() {
 		return instance!=null? instance : (instance = new Notebook());
 	}
-
-
-	/**
-	 * Create and return a new page with a default name: the unix-time of is creation
-	 * @return
-	 */
-	/*
-	public Page newPage(){
-		return newPage(System.currentTimeMillis()+"");
-	}
-
-	 */
-
-
-	/**
-	 * Create a new page and return it
-	 * @param name
-	 * @return
-	 */
-	/*
-	private Page newPage(String name) {
-		SinglePage page = new SinglePage(PAGES_DIR+File.separator+name);
-		if(!page.exists()) {
-			page.create();
-			addPage(page);
-		}
-
-		try {
-			listener.onCreated(page);
-		}catch (NullPointerException e){
-			e.printStackTrace();
-		}
-
-		return page;
-	}
-
-	 */
-
 
 
 	/**
@@ -162,7 +122,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	}
 
 
-
 	/**
 	 * When a page is deleted, it informs the Notebook
 	 * @param page
@@ -170,27 +129,19 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	@Override
 	public void onDeleted(Page page) {
 
-		//if deleted page is not empty, add it to recycle bin
-		if(!page.getSource().trim().isEmpty()){
-			putInRecycleBin(page);
-		}
-
-
+		//add deleted page to recycle-bin
+		putInRecycleBin(page);
 
 		//remove the page from the "selected" list
-		if(page.isSelected()){
-			selectedPagesList.remove(page);
-		}
+		selectedPagesList.remove(page);
 
 		//remove the page from the pages list
 		pagesList.remove(page);
 
-
+		//propagate the news about its deletion.
 		try {
 			listener.onDeleted(page);
-		}catch (NullPointerException e){
-
-		}
+		}catch (NullPointerException e){}
 
 	}
 
@@ -202,10 +153,7 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		}catch (NullPointerException e){
 		}
 
-
 		//re-sort the list of pages.
-
-
 		//Collections.sort(pagesList, new LastModifiedComparator());
 
 	}
@@ -213,14 +161,9 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	@Override
 	public void onCreated(Page page) {
 
-		Log.d("NOTEBOOK_SENSE_CREATED", page.getName()+"");
+		//add page to
+		addPage(page);
 
-		//stop if page is already in the list.
-		if(pagesList.contains(page)){
-			return;
-		}
-
-		pagesList.add(page);
 		try{
 			listener.onCreated(page);
 		}catch (NullPointerException e){
@@ -253,8 +196,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		return result.toArray(new Page[0]);
 
 	}
-
-
 	
 	/**
 	 * Get an array of pages by whitespace-separated keywords.
@@ -314,24 +255,16 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 * @param page
 	 */
 	private void addPage(Page page){
+
+		//don't add the same page twice
+		if(pagesList.contains(page)){
+			return;
+		}
+
 		//start listening to the new page
 		page.addListener(this);
 		//add the page at beginning (list sorted newest first)
 		pagesList.add(0, page);
-	}
-
-
-
-
-
-
-
-	/**
-	 * Get the number of loaded pages
-	 * @return
-	 */
-	public int getPagesNum(){
-		return pagesList.size();
 	}
 
 
@@ -348,7 +281,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	public void unselectAll(){
 		selectedPagesList.clear();
 	}
-
 
 	/**
 	 * Add a NotebookListener to this Notebook.
@@ -380,11 +312,12 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		}.start();
 	}
 
+	/**
+	 * Implemented by objects that need to request a backup from Notebook.
+	 */
 	public interface BackupRequester{
-		public void onBackupReady(File backupFile);
+		void onBackupReady(File backupFile);
 	}
-
-
 
 	/**
 	 * Import pages from a zip file.
@@ -407,31 +340,9 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 				e.printStackTrace();
 			}
 
-			Collections.sort(pagesList, new LastModifiedComparator());
+			//Collections.sort(pagesList, new LastModifiedComparator());
 		}
 	}
-
-	/**
-	 * Create a new page that has all of the contents of the selected pages,
-	 * and delete the selected pages.
-	 */
-	public void compactSelection(){
-
-		//create a new blank page
-		//Page page = newPage();
-
-		//write the contents of the selected pages onto the blank page
-		//new Compacter().compact(selectedPagesList, page);
-
-		//copy due to concurrent modification exception
-		ArrayList<Page> copy = new ArrayList<>(selectedPagesList);
-		//delete the old pages
-		for(int i=0; i<copy.size(); i++){
-			copy.get(i).delete();
-		}
-
-	}
-
 
 	/**
 	 * Put a page in the recycle bin:
@@ -456,7 +367,6 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 		new Compacter(false).compact(mockList, copy);
 		copy.setInRecycleBin(true);
 
-
 		recycleBin.add(copy);
 		copy.addListener(this);
 	}
@@ -466,25 +376,24 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 * it back with the existing pages.
 	 * @param page
 	 */
-	private void removeFromRecycleBin(Page page){
+	private void restoreFromRecycleBin(Page page){
 
 		if(!page.isInRecycleBin()){
 			return;
 		}
 
 		recycleBin.remove(page);
-		//Page restoredCopy = newPage(page.getName());
 
 		Page restoredCopy = new Article(PAGES_DIR+File.separator+page.getName());
 		restoredCopy.addListener(this);
 		restoredCopy.create();
 
-
-
 		ArrayList<Page> mockList = new ArrayList<>();
 		mockList.add(page);
 		new Compacter(false).compact(mockList, restoredCopy);
 		restoredCopy.setInRecycleBin(false);
+
+
 		page.delete();
 
 	}
@@ -496,11 +405,9 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	public void emptyRecycleBin(){
 		for(Page page : getRecycleBin()){
 			FileIO.deleteDirectory(((File)page).getPath() );
-			//Log.d("DELETED_PAGE", "deleting forever: "+page.getName());
 			listener.onDeleted(page);
 		}
 		recycleBin.clear();
-		//Log.d("DELETED_PAGE", "recycle bin size: "+ new File(PAGES_RECYCLE_BIN).listFiles().length);
 	}
 
 	/**
@@ -535,11 +442,10 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 	 */
 	public void restoreSelection(){
 		for(Page page : getSelected()){
-			removeFromRecycleBin(page);
+			restoreFromRecycleBin(page);
 		}
 		unselectAll();
 	}
-
 
 
 	public void download(String address){
@@ -569,17 +475,14 @@ public class Notebook implements Pageable, PageListener, Downloader.WebUser {
 
 		synchronized (this){
 
-
 			new Thread() {
 
 				public void run() {
-
 
 					Article page = new Article(PAGES_DIR+File.separator+System.currentTimeMillis());
 					page.initContent(data);
 					page.create();
 					addPage(page);
-
 
 					try {
 						listener.onCreated(page);

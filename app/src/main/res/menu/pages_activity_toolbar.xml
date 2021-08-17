@@ -10,10 +10,27 @@
 
 
     <item
-        android:id="@+id/edit"
+        android:id="@+id/edit_menu"
+        android:title="edit"
+        app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/edit_icon_title"
-        app:showAsAction="always" />
+        >
+
+        <menu>
+
+            <item
+                android:id="@+id/delete"
+                android:title="delete" />
+
+            <item
+                android:id="@+id/restore"
+                android:title="restore"
+                android:visible="false"/>
+
+        </menu>
+
+    </item>
+
 
 
     <item
@@ -76,9 +93,6 @@
         android:title="@string/empty_recycle_bin"
         android:visible="false"
         app:showAsAction="always" />
-
-
-
 
 
 </menu>
